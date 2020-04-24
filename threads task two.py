@@ -1,6 +1,7 @@
 """
 Threads_competition
 """
+import constant
 from queue import Queue
 import threading
 import time
@@ -49,17 +50,17 @@ def main():
     event = threading.Event()
     queue = Queue()
     round_thread = 1
-    LAST_ROUND = 5
-    while round_thread <= LAST_ROUND:
+
+    while round_thread <= constant.last_round:
         queue.put(int(input("input a score: ")))
 
-        for i in range(10):
+        for i in range(constant.range_threads):
             name = "thread " + str(i + 1)
             x = threading.Thread(target=get_score, args=[name, event, queue])
             x.start()
 
         event.set()
-        time.sleep(0.5)
+        time.sleep(constant.sleep_time)
         print("list of winners every round: ")
         print(lst_names)
         round_thread += 1

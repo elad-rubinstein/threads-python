@@ -1,6 +1,7 @@
 """
 putting_and_getting_from queues_using_threads
 """
+import constant
 import queue
 import threading
 
@@ -25,7 +26,7 @@ def get_queue(queue1: queue.Queue):
 
     :param queue1: The queue to get a massage from.
     """
-    file = open("lol.txt", "a")
+    file = open(constant.file_name, constant.mode)
     flag = True
     while flag:
         message = queue1.get()
