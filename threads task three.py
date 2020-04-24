@@ -3,7 +3,6 @@ putting_and_getting_from queues_using_threads
 """
 import queue
 import threading
-file = open("lol.txt", "w")
 
 
 def put_queue(queue1: queue.Queue):
@@ -12,12 +11,11 @@ def put_queue(queue1: queue.Queue):
 
     :param queue1: The queue to put an input in.
     """
-    flag = True
-    while flag:
-        inp = input("please input: ")
+    inp = input("please input: ")
+    while inp:
         queue1.put(inp)
-        if inp == "":
-            flag = False
+        inp = input("please input: ")
+    queue1.put(inp)
 
 
 def get_queue(queue1: queue.Queue):
@@ -27,11 +25,14 @@ def get_queue(queue1: queue.Queue):
 
     :param queue1: The queue to get a massage from.
     """
-
-    while True:
-        if not queue1.empty():
-            massage = queue1.get()
-            file.write(massage)
+    file = open("lol.txt", "a")
+    flag = True
+    while flag:
+        message = queue1.get()
+        file.write(message)
+        if not message:
+            flag = False
+    file.close()
 
 
 def main():
