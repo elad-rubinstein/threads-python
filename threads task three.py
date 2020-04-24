@@ -1,42 +1,46 @@
 """
-Usage of queues
+putting_and_getting_from queues_using_threads
 """
 import queue
 import threading
+file = open("lol.txt", "w")
 
-queue = queue.Queue()
 
-
-def put_queue():
+def put_queue(queue1: queue.Queue):
     """
     The method get inputs and put it in a queue in an infinite loop
+
+    :param queue1: The queue to put an input in.
     """
-    while True:
+    flag = True
+    while flag:
         inp = input("please input: ")
-        queue.put(inp)
+        queue1.put(inp)
         if inp == "":
-            break
+            flag = False
 
 
-def get_queue():
+def get_queue(queue1: queue.Queue):
     """
     The function try to get a massage from a queue and write it to a file
     in an infinite loop
+
+    :param queue1: The queue to get a massage from.
     """
-    open("task_three_file.txt", "w+")
-    f = open("task_three_file.txt", "a")
+
     while True:
-        if not queue.empty():
-            massage = queue.get()
-            f.write(massage)
+        if not queue1.empty():
+            massage = queue1.get()
+            file.write(massage)
 
 
 def main():
     """
-    The function create two threads to be responsible on two different methods
+    The function run the put_queue and get_queue methods
     """
-    t1 = threading.Thread(target=put_queue)
-    t2 = threading.Thread(target=get_queue)
+    queue1 = queue.Queue()
+    t1 = threading.Thread(target=put_queue, args=[queue1])
+    t2 = threading.Thread(target=get_queue, args=[queue1])
     t1.start()
     t2.start()
 

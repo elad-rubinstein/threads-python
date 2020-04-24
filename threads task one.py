@@ -1,19 +1,17 @@
 """
-Synchronisation in threads
+Synchronisation_in_threads
 """
-from threading import Thread, Event
-
-event = Event()
+from threading import Event, Thread
 
 
-def write_even(s: str):
+def write_even(string: str, event: Event):
     """
     Print the even chars of a given string correspondingly to the event
 
-    :param s: A given string to be printed.
+    :param string: A given string to be printed.
+    :param event: The Event used to synchronize between threads.
     """
-
-    for char in s[1::2]:
+    for char in string[1::2]:
         event.wait()
         print(char)
         event.clear()
@@ -21,17 +19,17 @@ def write_even(s: str):
 
 def main():
     """
-    Create a thread and print the odd chars of a string correspondingly
-     to the event
+    Print the odd chars of a string correspondingly to the event
     """
-    s = "synchronization"
-    even_printer = Thread(target=write_even, args=[s])
+    event = Event()
+    str1 = "synchronization"
+    even_printer = Thread(target=write_even, args=[str1, event])
     even_printer.start()
     i = 0
 
-    while i <= len(s):
+    while i <= len(str1):
         if not event.is_set():
-            print(s[i])
+            print(str1[i])
             i += 2
             event.set()
 

@@ -1,27 +1,26 @@
 """
-Threads competition
+Threads_competition
 """
-import time
+from queue import Queue
 import threading
+import time
 
 lst_names = []
-lst_score = []
-event = threading.Event()
 
 
-def get_score(threads_name: str):
+def get_score(threads_name: str, event: threading.Event, queue: Queue):
     """
-    According to the event, the threads accessing this method try
-    to take a score from a global list and put it in another global list
+    According to the event, the func take a score from a global list and put
+     a name in another global list
 
     :param threads_name: The name of the thread accessing this method.
+    :param event: The Event used to synchronize between threads.
+    :param queue: A queue to store scores.
     """
     event.wait()
-    if lst_score:
-        lst_score.pop(0)
-        lst_names.append(threads_name)
-        event.clear()
-        event.wait()
+    queue.get()
+    lst_names.append(threads_name)
+    event.clear()
 
 
 def calculate_score():
@@ -31,26 +30,32 @@ def calculate_score():
     max_wins = 0
     max_name = ""
     for thread_name in lst_names:
-        if lst_names.count(thread_name) > max_wins \
-                and lst_names.count(thread_name) > 1:
-            max_wins = lst_names.count(thread_name)
+        name_count = lst_names.count(thread_name)
+        if name_count > max_wins and name_count > 1:
+            max_wins = name_count
             max_name = thread_name
 
-    print(f"winner is {max_name}")
+    if max_name:
+        print(f"Winner is {max_name}")
+    else:
+        print("There isn't one winner!")
 
 
 def main():
     """
-    In a five-rounds loop the method create 10 threads to compete against
-    each other using the get_score method
+    The method runs a a five-round-competition between threads
+    using the get_score method
     """
+    event = threading.Event()
+    queue = Queue()
     round_thread = 1
-    while round_thread <= 5:
-        lst_score.append(int(input("input a score: ")))
+    LAST_ROUND = 5
+    while round_thread <= LAST_ROUND:
+        queue.put(int(input("input a score: ")))
 
         for i in range(10):
-            thread_name = "thread " + str(i + 1)
-            x = threading.Thread(target=get_score, args=[thread_name])
+            name = "thread " + str(i + 1)
+            x = threading.Thread(target=get_score, args=[name, event, queue])
             x.start()
 
         event.set()
